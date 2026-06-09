@@ -1,0 +1,15 @@
+apiVersion: v2
+name: k8sdoc
+description: AI-powered Kubernetes diagnostics using local Ollama/Qwen models
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - diagnostics
+  - ai
+  - ollama
+  - qwen
+  - kdoctor
+maintainers:
+  - name: k8sdoc authors

@@ -1,0 +1,66 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/user/k8sdoc
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+ollama:
+  # Enable in-cluster Ollama deployment (recommended for RTX 5050 node)
+  enabled: true
+  image:
+    repository: ollama/ollama
+    tag: latest
+  # Model to pull on startup
+  model: "qwen2.5-coder:14b-instruct-q4_K_M"
+  # Node with the RTX 5050 GPU
+  nodeSelector:
+    gpu: rtx5050
+  tolerations:
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+  resources:
+    limits:
+      nvidia.com/gpu: "1"
+      memory: "12Gi"
+    requests:
+      memory: "8Gi"
+  persistence:
+    enabled: true
+    size: 30Gi
+    storageClass: ""
+
+# k8sdoc controller 
+k8sdoc:
+  backend: ollama
+  # Ollama service URL (auto-set when ollama.enabled=true)
+  ollamaBaseURL: "" 
+  model: "qwen2.5-coder:14b-instruct-q4_K_M"
+
+  # kdoctor integration
+  kdoctor:
+    enabled: true
+    # Watch all namespaces ("") or a specific namespace
+    watchNamespace: ""
+
+  # Analysis settings
+  language: English
+  maxConcurrency: 10
+
+  # Serve mode (HTTP API)
+  serve:
+    enabled: true
+    port: 8080
+
+service:
+  type: ClusterIP
+  port: 8080
+
+serviceAccount:
+  create: true
+  name: "k8sdoc"
+
+# Read access to K8s resources + kdoctor CRDs
+rbac:
+  create: true
